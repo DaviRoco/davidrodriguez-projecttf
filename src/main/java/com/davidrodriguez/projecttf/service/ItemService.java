@@ -23,4 +23,11 @@ public class ItemService extends AbstractService<Item, Long> {
     Item newItem = Item.builder().name(entity.getName()).build();
     return itemRepository.save(newItem);
   }
+
+  public Item update(Item existingItem, ItemDto itemDto) {
+    existingItem.setName(itemDto.getName());
+    return itemRepository.save(existingItem);
+  }
+
+
 }

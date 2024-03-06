@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,5 +49,27 @@ public class ItemController {
     Item createdItem = itemService.create(itemDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdItem);
   }
-
+  @PutMapping("/item")
+  public ResponseEntity<ItemDto> updateItem(@RequestBody ItemDto itemDto) {
+    var type = new TypeToken<ItemDto>() {}.getType();
+    Item existingItem = itemService.findOne(itemDto.getId());
+    if (existingItem != null){
+      Item updatedItem = itemService.update(existingItem, itemDto);
+      ItemDto updatedItemDto = modelMapper.map(updatedItem, type);
+      return ResponseEntity.ok(updatedItemDto);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+/*
+  @DeleteMapping("/item/{id}")
+  public ResponseEntity<String> deleteItem(@RequestBody ItemDto itemDto) {
+    boolean deleted = itemService.delete(itemDto);
+    if (deleted) {
+      return ResponseEntity.ok("Item got deleted successfully");
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
+    }
+  }
+  */
 }
