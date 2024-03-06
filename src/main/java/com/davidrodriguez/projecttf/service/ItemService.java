@@ -1,5 +1,6 @@
 package com.davidrodriguez.projecttf.service;
 
+import com.davidrodriguez.projecttf.dto.ItemDto;
 import com.davidrodriguez.projecttf.entity.Item;
 import com.davidrodriguez.projecttf.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,10 @@ public class ItemService extends AbstractService<Item, Long> {
   @Override
   protected CrudRepository<Item, Long> getRepository() {
     return itemRepository;
+  }
+
+  public Item create(ItemDto entity) {
+    Item newItem = Item.builder().name(entity.getName()).build();
+    return itemRepository.save(newItem);
   }
 }
