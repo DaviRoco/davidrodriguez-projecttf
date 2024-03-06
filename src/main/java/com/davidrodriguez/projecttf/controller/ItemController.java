@@ -9,6 +9,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,19 +58,20 @@ public class ItemController {
       Item updatedItem = itemService.update(existingItem, itemDto);
       ItemDto updatedItemDto = modelMapper.map(updatedItem, type);
       return ResponseEntity.ok(updatedItemDto);
-    } else {
-      return ResponseEntity.notFound().build();
     }
+    return ResponseEntity.notFound().build();
   }
-/*
-  @DeleteMapping("/item/{id}")
+
+  @DeleteMapping("/item")
   public ResponseEntity<String> deleteItem(@RequestBody ItemDto itemDto) {
-    boolean deleted = itemService.delete(itemDto);
-    if (deleted) {
-      return ResponseEntity.ok("Item got deleted successfully");
-    } else {
+    Item existingItem = itemService.findOne(itemDto.getId());
+    if (existingItem != null) {
+      boolean deleted = itemService.delete(itemDto);
+      if (deleted) {
+        return ResponseEntity.ok("Item got deleted successfully");
+      }
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
     }
+    return ResponseEntity.notFound().build();
   }
-  */
 }

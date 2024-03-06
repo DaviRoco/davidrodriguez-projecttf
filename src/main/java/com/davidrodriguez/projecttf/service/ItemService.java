@@ -3,7 +3,6 @@ package com.davidrodriguez.projecttf.service;
 import com.davidrodriguez.projecttf.dto.ItemDto;
 import com.davidrodriguez.projecttf.entity.Item;
 import com.davidrodriguez.projecttf.repository.ItemRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +28,8 @@ public class ItemService extends AbstractService<Item, Long> {
     return itemRepository.save(existingItem);
   }
 
-
+  public boolean delete(ItemDto itemDto) {
+    itemRepository.deleteById(itemDto.getId());
+    return true;
+  }
 }
