@@ -44,7 +44,6 @@ public class ItemController {
       return ResponseEntity.notFound().build();
     }
   }
-
   @PostMapping("/item")
   public ResponseEntity<Item> createItem(@RequestBody ItemDto itemDto) {
     Item createdItem = itemService.create(itemDto);
