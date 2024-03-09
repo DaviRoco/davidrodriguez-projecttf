@@ -28,7 +28,7 @@ public class ItemService extends AbstractService<Item, Long> {
     Item createdItem = itemRepository.save(newItem);
     Inventory newInventory = Inventory.builder()
         .total(0)
-        .description("")
+        .description("Inventario auto-generado al crear un item.")
         .itemId(createdItem.getId()).build();
     inventoryRepository.save(newInventory);
     return createdItem;

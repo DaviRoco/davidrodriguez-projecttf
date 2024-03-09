@@ -70,4 +70,11 @@ public class InventoryService extends AbstractService<Inventory, Long> {
     return true;
   }
 
+  public List<Inventory> deleteInventoriesByItemId(Long id) {
+    List<Inventory> inventories = inventoryRepository.findAllByItemId(id);
+    for (int i = 0; i < inventories.size(); i++) {
+      inventoryRepository.deleteById(inventories.get(i).getId());
+    }
+    return inventories;
+  }
 }

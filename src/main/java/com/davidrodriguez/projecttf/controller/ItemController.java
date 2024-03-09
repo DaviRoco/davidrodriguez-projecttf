@@ -1,11 +1,14 @@
 package com.davidrodriguez.projecttf.controller;
 
+import com.davidrodriguez.projecttf.dto.InventoryDto;
 import com.davidrodriguez.projecttf.dto.ItemDto;
 import com.davidrodriguez.projecttf.entity.Item;
+import com.davidrodriguez.projecttf.service.InventoryService;
 import com.davidrodriguez.projecttf.service.ItemService;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemController {
 
   private final ItemService itemService;
+  private final InventoryService inventoryService;
 
-  public ItemController(ItemService itemService) {
+  public ItemController(ItemService itemService, InventoryService inventoryService) {
     this.itemService = itemService;
+    this.inventoryService = inventoryService;
   }
   private final ModelMapper modelMapper = new ModelMapper();
   @GetMapping("/item")
@@ -65,9 +70,11 @@ public class ItemController {
   public ResponseEntity<String> deleteItem(@RequestBody ItemDto itemDto) {
     Item existingItem = itemService.findOne(itemDto.getId());
     if (existingItem != null) {
+      var listType = new TypeToken<List<InventoryDto>>() {}.getType();
+      List<InventoryDto> inventories = modelMapper.map(inventoryService.deleteInventoriesByItemId(itemDto.getId()), listType);
       boolean deleted = itemService.delete(itemDto);
       if (deleted) {
-        return ResponseEntity.ok("Item got deleted successfully");
+        return ResponseEntity.ok("Item got deleted successfully, with the respective inventories: " + inventories.toString());
       }
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
     }
