@@ -43,21 +43,24 @@ public class InventoryService extends AbstractService<Inventory, Long> {
   public Inventory update(Inventory existingInventory, InventoryDto inventoryDto) {
     Optional<Item> existingItem = itemRepository.findById(inventoryDto.getItemId());
     if (existingItem.isPresent()){
-      String transaction = "Inventario actualizado para el Producto: " + existingItem.get().getName();
-      int newAmount = existingInventory.getTotal() + inventoryDto.getTotal();;
-      if (inventoryDto.getTotal() > 0) {
-        transaction = transaction + ", con un restock de " + (newAmount);
-      } else if (inventoryDto.getTotal() < 0) {
-        transaction = transaction + ", con ventas de " + (inventoryDto.getTotal()*-1);
-      } else {
-        transaction = transaction + ", sin ventas ni restock";
+      if ((existingInventory.getTotal() + inventoryDto.getTotal()) >= 0){
+        String transaction = "Inventario actualizado para el Producto: " + existingItem.get().getName();
+        int newAmount = existingInventory.getTotal() + inventoryDto.getTotal();
+        if (inventoryDto.getTotal() > 0) {
+          transaction = transaction + ", con un restock de " + (newAmount);
+        } else if (inventoryDto.getTotal() < 0) {
+          transaction = transaction + ", con ventas de " + (inventoryDto.getTotal()*-1);
+        } else {
+          transaction = transaction + ", sin ventas ni restock";
+        }
+        InventoryLog inventoryLog = new InventoryLog(0L, transaction, inventoryDto.getTotal(), existingItem.get().getId());
+        inventoryLogRepository.save(inventoryLog);
+        existingInventory.setTotal(newAmount);
+        existingInventory.setDescription(inventoryDto.getDescription());
+        existingInventory.setItemId(inventoryDto.getItemId());
+        return inventoryRepository.save(existingInventory);
       }
-      InventoryLog inventoryLog = new InventoryLog(0L, transaction, inventoryDto.getTotal(), existingItem.get().getId());
-      inventoryLogRepository.save(inventoryLog);
-      existingInventory.setTotal(newAmount);
-      existingInventory.setDescription(inventoryDto.getDescription());
-      existingInventory.setItemId(inventoryDto.getItemId());
-      return inventoryRepository.save(existingInventory);
+      return null;
     }
     return null;
   }

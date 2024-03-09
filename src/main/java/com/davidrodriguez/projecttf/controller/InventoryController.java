@@ -59,8 +59,11 @@ public class InventoryController {
     Inventory existingInventory = inventoryService.findOne(inventoryDto.getId());
     if (existingInventory != null){
       Inventory updatedInventory = inventoryService.update(existingInventory, inventoryDto);
-      InventoryDto updatedInventoryDto = modelMapper.map(updatedInventory, type);
-      return ResponseEntity.ok(updatedInventoryDto);
+      if (updatedInventory != null) {
+        InventoryDto updatedInventoryDto = modelMapper.map(updatedInventory, type);
+        return ResponseEntity.ok(updatedInventoryDto);
+      }
+      return ResponseEntity.notFound().build();
     }
     return ResponseEntity.notFound().build();
   }
