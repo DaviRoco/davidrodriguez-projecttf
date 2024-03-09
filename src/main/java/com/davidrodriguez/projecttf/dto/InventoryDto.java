@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class InventoryDto {
   private Long id;
   private int total;
+  private String description;
   private Long itemId;
 }

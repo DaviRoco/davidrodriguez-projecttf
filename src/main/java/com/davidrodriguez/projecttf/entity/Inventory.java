@@ -20,5 +20,6 @@ public class Inventory implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private int total;
+  private String description;
   private Long itemId;
 }

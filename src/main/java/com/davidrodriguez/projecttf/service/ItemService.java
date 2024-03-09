@@ -28,6 +28,7 @@ public class ItemService extends AbstractService<Item, Long> {
     Item createdItem = itemRepository.save(newItem);
     Inventory newInventory = Inventory.builder()
         .total(0)
+        .description("")
         .itemId(createdItem.getId()).build();
     inventoryRepository.save(newInventory);
     return createdItem;

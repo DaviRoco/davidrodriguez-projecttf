@@ -55,6 +55,7 @@ public class InventoryService extends AbstractService<Inventory, Long> {
       InventoryLog inventoryLog = new InventoryLog(0L, transaction, inventoryDto.getTotal(), existingItem.get().getId());
       inventoryLogRepository.save(inventoryLog);
       existingInventory.setTotal(newAmount);
+      existingInventory.setDescription(inventoryDto.getDescription());
       existingInventory.setItemId(inventoryDto.getItemId());
       return inventoryRepository.save(existingInventory);
     }
