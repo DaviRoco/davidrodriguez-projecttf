@@ -18,7 +18,7 @@ public class UserService extends AbstractService<User, Long> {
   public User create(UserDto entity) {
     User newUser = User.builder().
         firstName(entity.getFirstName())
-        .lastName(entity.getLastNames())
+        .lastNames(entity.getLastNames())
         .email(entity.getEmail())
         .phone(entity.getPhone())
         .password(entity.getPassword())

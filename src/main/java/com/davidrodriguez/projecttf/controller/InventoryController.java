@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,11 +28,19 @@ public class InventoryController {
   private final ModelMapper modelMapper = new ModelMapper();
 
   @GetMapping("/inventory")
-  public ResponseEntity<List<InventoryDto>> get() {
+  public ResponseEntity<List<InventoryDto>> get(@RequestParam String state) {
     var listType = new TypeToken<List<InventoryDto>>() {}.getType();
-    var list = (List<InventoryDto>) modelMapper.map(inventoryService.findAll(), listType);
+    List<InventoryDto> list;
+    if (state.equals("inactivo")) {
+      list = modelMapper.map(inventoryService.findAllByState("inactivo"), listType);
+    } else if (state.equals("activo")) {
+      list = modelMapper.map(inventoryService.findAllByState("activo"), listType);
+    } else {
+      list = modelMapper.map(inventoryService.findAll(), listType);
+    }
     return ResponseEntity.ok(list);
   }
+
   @GetMapping("/inventory/{id}")
   public ResponseEntity<InventoryDto> getItemById(@PathVariable Long id) {
     var type = new TypeToken<InventoryDto>() {}.getType();

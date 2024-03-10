@@ -79,4 +79,8 @@ public class InventoryService extends AbstractService<Inventory, Long> {
     }
     return inventories;
   }
+
+  public List<Inventory> findAllByState(String state) {
+    return inventoryRepository.findAllByState(state);
+  }
 }
