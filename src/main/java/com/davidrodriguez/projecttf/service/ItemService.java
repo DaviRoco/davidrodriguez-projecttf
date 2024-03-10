@@ -5,6 +5,7 @@ import com.davidrodriguez.projecttf.entity.Inventory;
 import com.davidrodriguez.projecttf.entity.Item;
 import com.davidrodriguez.projecttf.repository.InventoryRepository;
 import com.davidrodriguez.projecttf.repository.ItemRepository;
+import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +25,11 @@ public class ItemService extends AbstractService<Item, Long> {
   }
 
   public Item create(ItemDto entity) {
-    Item newItem = Item.builder().name(entity.getName()).build();
+    Item newItem = Item.builder().name(entity.getName()).state("activo").build();
     Item createdItem = itemRepository.save(newItem);
     Inventory newInventory = Inventory.builder()
         .total(0)
+        .state("activo")
         .description("Inventario auto-generado al crear un item.")
         .itemId(createdItem.getId()).build();
     inventoryRepository.save(newInventory);
@@ -36,6 +38,23 @@ public class ItemService extends AbstractService<Item, Long> {
 
   public Item update(Item existingItem, ItemDto itemDto) {
     existingItem.setName(itemDto.getName());
+    return itemRepository.save(existingItem);
+  }
+
+  public Item changeStateItem(Item existingItem) {
+    String stateChangeEnumeration;
+    if (existingItem.getState().equals("inactivo")){
+      stateChangeEnumeration = "activo";
+      existingItem.setState(stateChangeEnumeration);
+    } else {
+      stateChangeEnumeration = "inactivo";
+      existingItem.setState(stateChangeEnumeration);
+    }
+    List<Inventory> inventories = inventoryRepository.findAllByItemId(existingItem.getId());
+    for (int i = 0; i < inventories.size(); i++) {
+      inventories.get(i).setState(stateChangeEnumeration);
+      inventoryRepository.save(inventories.get(i));
+    }
     return itemRepository.save(existingItem);
   }
 

@@ -8,7 +8,6 @@ import com.davidrodriguez.projecttf.service.ItemService;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,6 +59,18 @@ public class ItemController {
     Item existingItem = itemService.findOne(itemDto.getId());
     if (existingItem != null){
       Item updatedItem = itemService.update(existingItem, itemDto);
+      ItemDto updatedItemDto = modelMapper.map(updatedItem, type);
+      return ResponseEntity.ok(updatedItemDto);
+    }
+    return ResponseEntity.notFound().build();
+  }
+
+  @PutMapping("/item/state-change")
+  public ResponseEntity<ItemDto> disableItem(@RequestBody ItemDto itemDto) {
+    var type = new TypeToken<ItemDto>() {}.getType();
+    Item existingItem = itemService.findOne(itemDto.getId());
+    if (existingItem != null){
+      Item updatedItem = itemService.changeStateItem(existingItem);
       ItemDto updatedItemDto = modelMapper.map(updatedItem, type);
       return ResponseEntity.ok(updatedItemDto);
     }

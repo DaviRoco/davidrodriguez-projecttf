@@ -22,4 +22,5 @@ public class Inventory implements Serializable {
   private int total;
   private String description;
   private Long itemId;
+  private String state;
 }

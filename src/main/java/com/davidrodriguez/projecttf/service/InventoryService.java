@@ -34,6 +34,7 @@ public class InventoryService extends AbstractService<Inventory, Long> {
     if (existingItem.isPresent()){
       Inventory newInventory = Inventory.builder()
           .total(0)
+          .state("activo")
           .itemId(entity.getItemId()).build();
       return inventoryRepository.save(newInventory);
     }
@@ -44,20 +45,21 @@ public class InventoryService extends AbstractService<Inventory, Long> {
     Optional<Item> existingItem = itemRepository.findById(inventoryDto.getItemId());
     if (existingItem.isPresent()){
       if ((existingInventory.getTotal() + inventoryDto.getTotal()) >= 0){
-        String transaction = "Inventario actualizado para el Producto: " + existingItem.get().getName();
+        String transaction = "Inventario actualizado para el Inventario: " + existingInventory.getId() + " con el item " + existingItem.get().getName();
         int newAmount = existingInventory.getTotal() + inventoryDto.getTotal();
         if (inventoryDto.getTotal() > 0) {
           transaction = transaction + ", con un restock de " + (newAmount);
         } else if (inventoryDto.getTotal() < 0) {
           transaction = transaction + ", con ventas de " + (inventoryDto.getTotal()*-1);
         } else {
-          transaction = transaction + ", sin ventas ni restock";
+          transaction = transaction + ", se realizo un cambio en la información del inventario.";
         }
         InventoryLog inventoryLog = new InventoryLog(0L, transaction, inventoryDto.getTotal(), existingItem.get().getId());
         inventoryLogRepository.save(inventoryLog);
         existingInventory.setTotal(newAmount);
         existingInventory.setDescription(inventoryDto.getDescription());
         existingInventory.setItemId(inventoryDto.getItemId());
+        existingInventory.setState(existingItem.get().getState());
         return inventoryRepository.save(existingInventory);
       }
       return null;
