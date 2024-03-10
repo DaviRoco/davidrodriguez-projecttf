@@ -22,7 +22,7 @@ public class User implements Serializable {
 
   private String firstName;
 
-  private String lastName;
+  private String lastNames;
 
   private String email;
 

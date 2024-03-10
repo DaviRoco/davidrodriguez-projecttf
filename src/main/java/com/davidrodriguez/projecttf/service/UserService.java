@@ -18,7 +18,7 @@ public class UserService extends AbstractService<User, Long> {
   public User create(UserDto entity) {
     User newUser = User.builder().
         firstName(entity.getFirstName())
-        .lastName(entity.getLastName())
+        .lastName(entity.getLastNames())
         .email(entity.getEmail())
         .phone(entity.getPhone())
         .password(entity.getPassword())
@@ -28,7 +28,7 @@ public class UserService extends AbstractService<User, Long> {
 
   public User update(User existingUser, UserDto userDto){
     existingUser.setFirstName(userDto.getFirstName());
-    existingUser.setLastName(userDto.getLastName());
+    existingUser.setLastNames(userDto.getLastNames());
     existingUser.setEmail(userDto.getEmail());
     existingUser.setPhone(userDto.getPhone());
     existingUser.setPassword(userDto.getPassword());

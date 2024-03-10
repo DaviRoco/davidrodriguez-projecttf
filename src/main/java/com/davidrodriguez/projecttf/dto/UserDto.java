@@ -12,7 +12,7 @@ public class UserDto {
 
   private String firstName;
 
-  private String lastName;
+  private String lastNames;
 
   private String email;
 
