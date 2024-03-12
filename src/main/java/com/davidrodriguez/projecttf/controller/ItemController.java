@@ -66,11 +66,11 @@ public class ItemController {
   }
 
   @PutMapping("/item/state-change")
-  public ResponseEntity<ItemDto> disableItem(@RequestBody ItemDto itemDto) {
+  public ResponseEntity<ItemDto> changeStateItem(@RequestBody ItemDto itemDto) {
     var type = new TypeToken<ItemDto>() {}.getType();
     Item existingItem = itemService.findOne(itemDto.getId());
     if (existingItem != null){
-      Item updatedItem = itemService.changeStateItem(existingItem);
+      Item updatedItem = itemService.changeItemState(existingItem);
       ItemDto updatedItemDto = modelMapper.map(updatedItem, type);
       return ResponseEntity.ok(updatedItemDto);
     }

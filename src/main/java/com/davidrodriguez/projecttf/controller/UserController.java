@@ -8,6 +8,7 @@ import com.davidrodriguez.projecttf.service.UserService;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -62,7 +63,17 @@ public class UserController {
     }
     return ResponseEntity.notFound().build();
   }
-
+  @PutMapping("/user/state-change")
+  public ResponseEntity<UserDto> changeStateUser(@RequestBody UserDto userDto) {
+    var type = new TypeToken<UserDto>() {}.getType();
+    User existingUser = userService.findOne(userDto.getId());
+    if (existingUser != null) {
+      User updatedUser = userService.changeUserState(existingUser);
+      UserDto updatedUserDto = modelMapper.map(updatedUser, type);
+      return ResponseEntity.ok(updatedUserDto);
+    }
+    return ResponseEntity.notFound().build();
+  }
   @DeleteMapping("/user")
   public ResponseEntity<String> deleteItem(@RequestBody UserDto userDto) {
     User existingUser = userService.findOne(userDto.getId());

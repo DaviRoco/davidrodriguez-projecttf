@@ -25,11 +25,11 @@ public class ItemService extends AbstractService<Item, Long> {
   }
 
   public Item create(ItemDto entity) {
-    Item newItem = Item.builder().name(entity.getName()).state("activo").build();
+    Item newItem = Item.builder().name(entity.getName()).state("Activo").build();
     Item createdItem = itemRepository.save(newItem);
     Inventory newInventory = Inventory.builder()
         .total(0)
-        .state("activo")
+        .state("Activo")
         .description("Inventario auto-generado al crear un item.")
         .itemId(createdItem.getId()).build();
     inventoryRepository.save(newInventory);
@@ -41,13 +41,13 @@ public class ItemService extends AbstractService<Item, Long> {
     return itemRepository.save(existingItem);
   }
 
-  public Item changeStateItem(Item existingItem) {
+  public Item changeItemState(Item existingItem) {
     String stateChangeEnumeration;
-    if (existingItem.getState().equals("inactivo")){
-      stateChangeEnumeration = "activo";
+    if (existingItem.getState().equals("Inactivo")){
+      stateChangeEnumeration = "Activo";
       existingItem.setState(stateChangeEnumeration);
     } else {
-      stateChangeEnumeration = "inactivo";
+      stateChangeEnumeration = "Inactivo";
       existingItem.setState(stateChangeEnumeration);
     }
     List<Inventory> inventories = inventoryRepository.findAllByItemId(existingItem.getId());

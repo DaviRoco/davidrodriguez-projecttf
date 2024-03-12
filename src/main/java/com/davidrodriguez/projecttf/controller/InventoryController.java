@@ -31,10 +31,10 @@ public class InventoryController {
   public ResponseEntity<List<InventoryDto>> get(@RequestParam String state) {
     var listType = new TypeToken<List<InventoryDto>>() {}.getType();
     List<InventoryDto> list;
-    if (state.equals("inactivo")) {
-      list = modelMapper.map(inventoryService.findAllByState("inactivo"), listType);
-    } else if (state.equals("activo")) {
-      list = modelMapper.map(inventoryService.findAllByState("activo"), listType);
+    if (state.equals("Inactivo")) {
+      list = modelMapper.map(inventoryService.findAllByState("Inactivo"), listType);
+    } else if (state.equals("Activo")) {
+      list = modelMapper.map(inventoryService.findAllByState("Activo"), listType);
     } else {
       list = modelMapper.map(inventoryService.findAll(), listType);
     }

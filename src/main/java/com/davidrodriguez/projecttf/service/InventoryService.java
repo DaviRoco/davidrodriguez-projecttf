@@ -34,7 +34,7 @@ public class InventoryService extends AbstractService<Inventory, Long> {
     if (existingItem.isPresent()){
       Inventory newInventory = Inventory.builder()
           .total(0)
-          .state("activo")
+          .state("Activo")
           .itemId(entity.getItemId()).build();
       return inventoryRepository.save(newInventory);
     }
