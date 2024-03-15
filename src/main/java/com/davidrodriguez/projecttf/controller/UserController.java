@@ -102,7 +102,8 @@ public class UserController {
     if (user != null && !Objects.equals(user.getState(), "Inactivo")) {
       boolean loggedIn = userService.login(user, userDto.getPassword());
       if (loggedIn) {
-        return modelMapper.map(userService.getUserByEmail(email), type);
+        User emptyUser = new User(0L, "", "", user.getEmail(), "", "", 0, user.getState());
+        return modelMapper.map(emptyUser, type);
       }
       return null;
     } else {
