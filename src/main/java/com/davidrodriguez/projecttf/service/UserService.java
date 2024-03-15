@@ -6,6 +6,8 @@ import com.davidrodriguez.projecttf.entity.Item;
 import com.davidrodriguez.projecttf.entity.User;
 import com.davidrodriguez.projecttf.repository.UserRepository;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +16,10 @@ import java.util.Optional;
 @Service
 public class UserService extends AbstractService<User, Long> {
   private final UserRepository userRepository;
-  public UserService(UserRepository userRepository){ this.userRepository = userRepository; }
+
+  public UserService(UserRepository userRepository){
+    this.userRepository = userRepository;
+  }
   @Override
   protected CrudRepository<User, Long> getRepository() {
     return userRepository;
@@ -56,5 +61,13 @@ public class UserService extends AbstractService<User, Long> {
   public boolean delete(UserDto userDto) {
     userRepository.deleteById(userDto.getId());
     return true;
+  }
+
+  public User getUserByEmail(String email) {
+      return userRepository.getUserByEmail(email);
+  }
+
+  public boolean login(User user, String password) {
+      return user.getPassword().equals(password);
   }
 }

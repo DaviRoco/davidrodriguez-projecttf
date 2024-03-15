@@ -6,6 +6,8 @@ import com.davidrodriguez.projecttf.entity.Item;
 import com.davidrodriguez.projecttf.entity.User;
 import com.davidrodriguez.projecttf.service.UserService;
 import java.util.List;
+import java.util.Objects;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
@@ -28,7 +30,12 @@ public class UserController {
   public UserController(UserService userService) { this.userService = userService; }
 
   private final ModelMapper modelMapper = new ModelMapper();
-
+  @GetMapping("/user-by-email/{email}")
+  public ResponseEntity<UserDto> getByEmail(@PathVariable String email) {
+    var type = new TypeToken<UserDto>() {}.getType();
+    var user = modelMapper.map(userService.getUserByEmail(email), type);
+    return ResponseEntity.ok((UserDto) user);
+  }
   @GetMapping("/user")
   public ResponseEntity<List<UserDto>> get() {
     var listType = new TypeToken<List<UserDto>>() {}.getType();
@@ -37,7 +44,7 @@ public class UserController {
   }
 
   @GetMapping("/user/{id}")
-  public ResponseEntity<UserDto> getItemById(@PathVariable Long id) {
+  public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
     var type = new TypeToken<UserDto>() {}.getType();
     User user = userService.findOne(id);
     if (user != null) {
@@ -48,12 +55,12 @@ public class UserController {
     }
   }
   @PostMapping("/user")
-  public ResponseEntity<User> createItem(@RequestBody UserDto userDto) {
+  public ResponseEntity<User> createUser(@RequestBody UserDto userDto) {
     User createdUser = userService.create(userDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
   @PutMapping("/user")
-  public ResponseEntity<UserDto> updateItem(@RequestBody UserDto userDto) {
+  public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
     var type = new TypeToken<UserDto>() {}.getType();
     User existingUser = userService.findOne(userDto.getId());
     if (existingUser != null){
@@ -75,7 +82,7 @@ public class UserController {
     return ResponseEntity.notFound().build();
   }
   @DeleteMapping("/user")
-  public ResponseEntity<String> deleteItem(@RequestBody UserDto userDto) {
+  public ResponseEntity<String> deleteUser(@RequestBody UserDto userDto) {
     User existingUser = userService.findOne(userDto.getId());
     if (existingUser != null) {
       boolean deleted = userService.delete(userDto);
@@ -85,5 +92,21 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
     return ResponseEntity.notFound().build();
+  }
+
+  @PostMapping("/user/login")
+  public UserDto loginUser(@RequestBody UserDto userDto) {
+    var type = new TypeToken<UserDto>() {}.getType();
+    String email = userDto.getEmail();
+    User user = userService.getUserByEmail(email);
+    if (user != null && !Objects.equals(user.getState(), "Inactivo")) {
+      boolean loggedIn = userService.login(user, userDto.getPassword());
+      if (loggedIn) {
+        return modelMapper.map(userService.getUserByEmail(email), type);
+      }
+      return null;
+    } else {
+      return null;
+    }
   }
 }
