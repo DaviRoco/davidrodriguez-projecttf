@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,15 +27,19 @@ public class UserService extends AbstractService<User, Long> {
   }
 
   public User create(UserDto entity) {
-    User newUser = User.builder().
-        firstName(entity.getFirstName())
-        .lastNames(entity.getLastNames())
-        .email(entity.getEmail())
-        .phone(entity.getPhone())
-        .password(entity.getPassword())
-        .age(entity.getAge())
-        .state("Activo").build();
-    return super.create(newUser);
+    User existingUser = userRepository.getUserByEmail(entity.getEmail());
+    if (existingUser == null) {
+      User newUser = User.builder().
+              firstName(entity.getFirstName())
+              .lastNames(entity.getLastNames())
+              .email(entity.getEmail())
+              .phone(entity.getPhone())
+              .password(entity.getPassword())
+              .age(entity.getAge())
+              .state("Inactivo").build();
+      return super.create(newUser);
+    }
+    return null;
   }
 
   public User update(User existingUser, UserDto userDto){
@@ -67,7 +72,26 @@ public class UserService extends AbstractService<User, Long> {
       return userRepository.getUserByEmail(email);
   }
 
-  public boolean login(User user, String password) {
-      return user.getPassword().equals(password);
+  public User login(String email, String password) {
+    User existingUser = userRepository.getUserByEmail(email);
+    if (existingUser != null && !Objects.equals(existingUser.getState(), "Inactivo")) {
+      if (existingUser.getPassword().equals(password)) {
+        return new User(0L, "", "", existingUser.getEmail(), "", "", 0, existingUser.getState());
+      }
+      return null;
+    }
+    return null;
+//    User user = userService.getUserByEmail(email);
+//    if (user != null && !Objects.equals(user.getState(), "Inactivo")) {
+//      boolean loggedIn = userService.login(user, userDto.getPassword());
+//      if (loggedIn) {
+//        User emptyUser = new User(0L, "", "", user.getEmail(), "", "", 0, user.getState());
+//        return modelMapper.map(emptyUser, type);
+//      }
+//      return null;
+//    } else {
+//      return null;
+//    }
+//      return user.getPassword().equals(password);
   }
 }

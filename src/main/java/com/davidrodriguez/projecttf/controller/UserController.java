@@ -33,8 +33,11 @@ public class UserController {
   @GetMapping("/user-by-email/{email}")
   public ResponseEntity<UserDto> getByEmail(@PathVariable String email) {
     var type = new TypeToken<UserDto>() {}.getType();
-    var user = modelMapper.map(userService.getUserByEmail(email), type);
-    return ResponseEntity.ok((UserDto) user);
+    var user = userService.getUserByEmail(email);
+    if (user != null) {
+      return ResponseEntity.ok(modelMapper.map(user, type));
+    }
+    return null;
   }
   @GetMapping("/user")
   public ResponseEntity<List<UserDto>> get() {
@@ -95,19 +98,13 @@ public class UserController {
   }
 
   @PostMapping("/user/login")
-  public UserDto loginUser(@RequestBody UserDto userDto) {
+  public ResponseEntity<UserDto> loginUser(@RequestBody UserDto userDto) {
     var type = new TypeToken<UserDto>() {}.getType();
     String email = userDto.getEmail();
-    User user = userService.getUserByEmail(email);
-    if (user != null && !Objects.equals(user.getState(), "Inactivo")) {
-      boolean loggedIn = userService.login(user, userDto.getPassword());
-      if (loggedIn) {
-        User emptyUser = new User(0L, "", "", user.getEmail(), "", "", 0, user.getState());
-        return modelMapper.map(emptyUser, type);
-      }
-      return null;
-    } else {
-      return null;
+    User loggedInUser = userService.login(email, userDto.getPassword());
+    if (loggedInUser != null) {
+      return ResponseEntity.ok(modelMapper.map(loggedInUser, type));
     }
+    return null;
   }
 }
