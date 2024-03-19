@@ -1,16 +1,16 @@
 package com.davidrodriguez.projecttf.controller;
 
-import com.davidrodriguez.projecttf.dto.ItemDto;
+import com.davidrodriguez.projecttf.dto.EmailMessage;
 import com.davidrodriguez.projecttf.dto.UserDto;
-import com.davidrodriguez.projecttf.entity.Item;
 import com.davidrodriguez.projecttf.entity.User;
+import com.davidrodriguez.projecttf.service.EmailService;
 import com.davidrodriguez.projecttf.service.UserService;
+
+import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,7 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
   private final UserService userService;
 
-  public UserController(UserService userService) { this.userService = userService; }
+  private final EmailService emailService;
+
+  public UserController(UserService userService, EmailService emailService) {
+    this.userService = userService;
+    this.emailService = emailService;
+  }
 
   private final ModelMapper modelMapper = new ModelMapper();
   @GetMapping("/user-by-email/{email}")
@@ -60,6 +65,10 @@ public class UserController {
   @PostMapping("/user")
   public ResponseEntity<User> createUser(@RequestBody UserDto userDto) {
     User createdUser = userService.create(userDto);
+    if (createdUser != null) {
+//      EmailMessage introMessage = new EmailMessage(createdUser.getEmail(), "david@rodriguezcoto.com", "Bienvenido a Farmaticas", "Bienvenido a Farmaticas, por favor ingrese a cambiar su contraseña en el siguiente <a href='http://localhost:4200/#/change-password?email=" + userDto.getEmail() + "'> link </a>");
+      emailService.sendIntroEmail(userDto.getEmail(), userDto);
+    }
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
   @PutMapping("/user")
@@ -106,5 +115,11 @@ public class UserController {
       return ResponseEntity.ok(modelMapper.map(loggedInUser, type));
     }
     return null;
+  }
+
+  @PostMapping("/user/reset-password")
+  public void sendEmail(@RequestBody UserDto userDto) {
+//    EmailMessage introMessage = new EmailMessage(userDto.getEmail(), "david@rodriguezcoto.com", "Recuperación de contraseña: Farmaticas", "Bienvenido a Farmaticas, por favor ingrese a cambiar su contraseña en el siguiente <a href='http://localhost:4200/#/change-password?email=" + userDto.getEmail() + "'> link </a>");
+    emailService.sendRecoveryEmail(userDto.getEmail(), userDto);
   }
 }

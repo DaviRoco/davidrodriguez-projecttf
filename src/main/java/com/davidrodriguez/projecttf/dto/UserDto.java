@@ -23,4 +23,6 @@ public class UserDto {
   private int age;
 
   private String state;
+  
+  private String gender;
 }
