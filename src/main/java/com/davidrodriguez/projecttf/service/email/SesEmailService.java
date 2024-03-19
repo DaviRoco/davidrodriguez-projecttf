@@ -47,7 +47,7 @@ public class SesEmailService implements EmailService {
   public boolean sendIntroEmail(String to, UserDto userDto) {
     String subject = "¡Bienvenido a Farmaticas!";
     String content = "<html><body><p><h1> Estimado " + userDto.getFirstName() + "</h1></p><p>¡Gracias por unirte a Farmaticas! Estamos emocionados de tenerte a bordo.</p>" +
-            "Haz clic en el siguiente enlace para establecer tu contraseña:</p><p><a href='http://localhost:4200/#/change-password?email=" + userDto.getEmail() + "'>Establecer contraseña</a></p>" +
+            "Haz clic en el siguiente enlace para establecer tu contraseña:</p><p><a href='http://davidrodriguez-projecttf.s3-website-us-east-1.amazonaws.com/#/change-password?email=" + userDto.getEmail() + "'>Establecer contraseña</a></p>" +
             "<p>Saludos cordiales,<br> David Rodríguez Coto</p></body></html>";
     return send(createEmailMessage(to, subject, content));
   }
@@ -56,7 +56,7 @@ public class SesEmailService implements EmailService {
     String subject = "Instrucciones para recuperar la contraseña";
     String content = "<html><body><p><h1> Estimado" + userDto.getFirstName() + "</h1></p>" +
             "<p>Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el siguiente enlace para restablecerla:</p>" +
-            "<p><a href='http://localhost:4200/#/change-password?email=" + userDto.getEmail() + "'>Restablecer contraseña</a></p><p>Si no solicitaste este cambio, por favor ignora este correo electrónico.</p>" +
+            "<p><a href='http://davidrodriguez-projecttf.s3-website-us-east-1.amazonaws.com/#/change-password?email=" + userDto.getEmail() + "'>Restablecer contraseña</a></p><p>Si no solicitaste este cambio, por favor ignora este correo electrónico.</p>" +
             "<p>Saludos cordiales,<br> David Rodríguez Coto</p></body></html>";
     return send(createEmailMessage(to, subject, content));
   }
